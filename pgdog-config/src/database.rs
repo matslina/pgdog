@@ -1,3 +1,4 @@
+use pgdog_util::deserialize::{UnknownFields, WithUnknownFields};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -230,6 +231,17 @@ pub struct Database {
     /// Role-specific settings.
     #[serde(flatten, default)]
     pub role_config: RoleConfig,
+
+    /// Keys that no field of this struct recognized.
+    #[serde(flatten)]
+    #[schemars(skip)]
+    pub unknown: UnknownFields,
+}
+
+impl WithUnknownFields for Database {
+    fn unknown_fields(&self) -> impl Iterator<Item = String> + '_ {
+        self.unknown.unknown_fields()
+    }
 }
 
 impl Database {
